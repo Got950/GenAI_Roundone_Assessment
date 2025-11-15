@@ -3,7 +3,6 @@ import Message from './Message'
 import InputArea from './InputArea'
 import TypingIndicator from './TypingIndicator'
 import VoiceInput from './VoiceInput'
-import Settings from './Settings'
 import { useTheme } from '../contexts/ThemeContext'
 import { usePerson } from '../contexts/PersonContext'
 import { callGroqAPI } from '../services/groqApi'
@@ -23,14 +22,13 @@ function Chatbot() {
       id: '1',
       text: personDetails
         ? "Hello! 👋 I'm Alex. I can answer questions about the person you've configured. How can I help you today?"
-        : "Hello! 👋 I'm Alex. I'm ready to chat! You can configure person details in settings if you'd like me to answer questions about a specific person.",
+        : "Hello! 👋 I'm Alex. I'm ready to chat! How can I help you today?",
       sender: 'bot',
       timestamp: new Date(),
     },
   ])
   const [isTyping, setIsTyping] = useState(false)
   const [isListening, setIsListening] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const messagesRef = useRef<MessageType[]>(messages)
@@ -155,19 +153,6 @@ function Chatbot() {
             </div>
             <p className="text-white/90 dark:text-blue-200/90 text-sm code-text drop-shadow">[STATUS: ONLINE] [MODE: {theme.toUpperCase()}]</p>
           </div>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setShowSettings(true)}
-              className="p-2.5 bg-white/25 dark:bg-blue-500/30 hover:bg-white/35 dark:hover:bg-blue-500/40 rounded-xl backdrop-blur-sm border border-white/40 dark:border-blue-400/60 transition-all duration-200 transform hover:scale-110 active:scale-95"
-              aria-label="Settings"
-              title="Settings"
-            >
-              <svg className="w-6 h-6 text-white dark:text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </button>
-          </div>
         </div>
       </div>
 
@@ -198,7 +183,6 @@ function Chatbot() {
         isListening={isListening}
         onListeningChange={setIsListening}
       />
-      <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </div>
   )
 }
