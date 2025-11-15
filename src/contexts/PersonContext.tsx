@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
 
-// Default API key - Load from environment variable
-// Set VITE_GROQ_API_KEY in Vercel environment variables or .env file
-const DEFAULT_API_KEY = import.meta.env.VITE_GROQ_API_KEY || ''
+// Default API key - Set directly for immediate use
+// This will be used if no environment variable is set
+const DEFAULT_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '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'
 
 interface PersonContextType {
   personDetails: string

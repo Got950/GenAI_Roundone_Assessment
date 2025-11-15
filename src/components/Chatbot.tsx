@@ -64,8 +64,8 @@ function Chatbot() {
   const handleSendMessage = async (text: string) => {
     if (!text.trim()) return
 
-    // Always use the API key from context or environment variable
-    const keyToUse = apiKey || import.meta.env.VITE_GROQ_API_KEY || ''
+    // Always use the API key from context, environment variable, or default
+    const keyToUse = apiKey || import.meta.env.VITE_GROQ_API_KEY || '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'
 
     const userMessage: MessageType = {
       id: Date.now().toString(),
