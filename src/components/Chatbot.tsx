@@ -23,7 +23,7 @@ function Chatbot() {
       id: '1',
       text: personDetails
         ? "Hello! 👋 I'm Alex. I can answer questions about the person you've configured. How can I help you today?"
-        : "Hello! 👋 I'm Alex. Please configure your Groq API key and person details in settings to get started.",
+        : "Hello! 👋 I'm Alex. I'm ready to chat! You can configure person details in settings if you'd like me to answer questions about a specific person.",
       sender: 'bot',
       timestamp: new Date(),
     },
@@ -64,18 +64,8 @@ function Chatbot() {
   const handleSendMessage = async (text: string) => {
     if (!text.trim()) return
 
-    // If no API key, show settings but don't block - let the API call handle the error
-    if (!apiKey) {
-      setShowSettings(true)
-      const errorMessage: MessageType = {
-        id: (Date.now() + 1).toString(),
-        text: "Please configure your Groq API key in settings to use the chatbot.",
-        sender: 'bot',
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, errorMessage])
-      return
-    }
+    // Always use the API key from context or environment variable
+    const keyToUse = apiKey || import.meta.env.VITE_GROQ_API_KEY || ''
 
     const userMessage: MessageType = {
       id: Date.now().toString(),
@@ -100,7 +90,7 @@ function Chatbot() {
           content: msg.text,
         }))
 
-      const response = await callGroqAPI(conversationMessages, apiKey, personDetails)
+      const response = await callGroqAPI(conversationMessages, keyToUse, personDetails)
 
       const botMessage: MessageType = {
         id: (Date.now() + 1).toString(),
