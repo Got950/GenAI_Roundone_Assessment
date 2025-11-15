@@ -1,5 +1,10 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
 
+// Default API key - Set your Groq API key here or via environment variable VITE_GROQ_API_KEY
+// Once set in settings, it will be saved to localStorage and always used
+const DEFAULT_API_KEY = import.meta.env.VITE_GROQ_API_KEY || ''
+// You can also hardcode it here: const DEFAULT_API_KEY = 'your-api-key-here'
+
 interface PersonContextType {
   personDetails: string
   setPersonDetails: (details: string) => void
@@ -84,7 +89,18 @@ Harshit is an AI Engineer specializing in computer vision, LLM-based systems, RA
     return defaultDetails
   })
   const [apiKey, setApiKey] = useState<string>(() => {
-    return localStorage.getItem('groqApiKey') || ''
+    // First check localStorage for saved key
+    const savedKey = localStorage.getItem('groqApiKey')
+    if (savedKey) return savedKey
+    
+    // If no saved key, use default from environment variable
+    if (DEFAULT_API_KEY) {
+      // Save default key to localStorage so it persists
+      localStorage.setItem('groqApiKey', DEFAULT_API_KEY)
+      return DEFAULT_API_KEY
+    }
+    
+    return ''
   })
 
   const updatePersonDetails = (details: string) => {

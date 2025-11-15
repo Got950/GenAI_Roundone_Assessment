@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePerson } from '../contexts/PersonContext'
 
 interface SettingsProps {
@@ -10,6 +10,14 @@ function Settings({ isOpen, onClose }: SettingsProps) {
   const { personDetails, setPersonDetails, apiKey, setApiKey } = usePerson()
   const [localPersonDetails, setLocalPersonDetails] = useState(personDetails)
   const [localApiKey, setLocalApiKey] = useState(apiKey)
+
+  // Update local state when settings modal opens to reflect current values
+  useEffect(() => {
+    if (isOpen) {
+      setLocalPersonDetails(personDetails)
+      setLocalApiKey(apiKey)
+    }
+  }, [isOpen, personDetails, apiKey])
 
   if (!isOpen) return null
 

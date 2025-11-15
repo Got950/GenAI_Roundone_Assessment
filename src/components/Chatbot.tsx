@@ -64,9 +64,16 @@ function Chatbot() {
   const handleSendMessage = async (text: string) => {
     if (!text.trim()) return
 
+    // If no API key, show settings but don't block - let the API call handle the error
     if (!apiKey) {
-      alert('Please configure your Groq API key in settings first.')
       setShowSettings(true)
+      const errorMessage: MessageType = {
+        id: (Date.now() + 1).toString(),
+        text: "Please configure your Groq API key in settings to use the chatbot.",
+        sender: 'bot',
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
       return
     }
 
