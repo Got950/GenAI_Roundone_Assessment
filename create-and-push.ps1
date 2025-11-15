@@ -1,5 +1,5 @@
 # Create GitHub Repository and Push Script
-$GitHubUsername = "ShreeyanBejagam"
+$GitHubUsername = "Got950"
 $RepoName = "Harshtih"
 
 Write-Host "=== Creating GitHub Repository and Pushing Code ===" -ForegroundColor Cyan

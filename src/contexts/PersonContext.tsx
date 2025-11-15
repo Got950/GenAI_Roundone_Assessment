@@ -14,15 +14,15 @@ export function PersonProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('personDetails')
     if (saved) return saved
     
-    // Default person details for ShreeyanBejagam
-    const defaultDetails = `SHREEYANBEJAGAM - COMPLETE PROFILE
+    // Default person details for Harshit Preetam R
+    const defaultDetails = `HARSHIT PREETAM R - COMPLETE PROFILE
 
 BASIC INFORMATION:
-- Full Name: ShreeyanBejagam
+- Full Name: Harshit Preetam R
 - Location: Hyderabad, Telangana, India
-- Email: shreeyanbejagam@gmail.com
+- Email: rampalliharshit@gmail.com
 - Phone: +91 87927 38152
-- Portfolio: https://shreeyanbejagam-portfolio.vercel.app
+- Portfolio: https://harshit-portfolio-d3b1.vercel.app
 - Experience Level: Entry-Level (0–1.5 years of hands-on project experience)
 - Notice Period: 30 days
 - Current CTC: ₹4,80,000
@@ -33,7 +33,7 @@ EDUCATION:
 - Key coursework: Machine Learning, Deep Learning, Computer Vision, Data Structures & Algorithms, Robotics, Linear Algebra, Probability, Optimization, Operating Systems, Cloud Basics
 
 TECHNICAL SUMMARY:
-ShreeyanBejagam is an AI Engineer with strong hands-on experience in Computer Vision (real-time detection, segmentation, tracking), LLMs (prompting, fine-tuning, tool use), RAG Pipelines (embeddings, retrieval, vector DBs), Multi-Agent AI systems (LangChain agents, shared memory, tools), Edge AI deployment (Jetson Xavier), Backend for AI (FastAPI, Flask), and Model optimization (TensorRT, quantization). He is skilled in building practical, production-ready AI systems that integrate CV + LLMs + backend automation.
+Harshit is an AI Engineer with strong hands-on experience in Computer Vision (real-time detection, segmentation, tracking), LLMs (prompting, fine-tuning, tool use), RAG Pipelines (embeddings, retrieval, vector DBs), Multi-Agent AI systems (LangChain agents, shared memory, tools), Edge AI deployment (Jetson Xavier), Backend for AI (FastAPI, Flask), and Model optimization (TensorRT, quantization). He is skilled in building practical, production-ready AI systems that integrate CV + LLMs + backend automation.
 
 TECHNICAL SKILLS:
 - Programming: Python (Primary), JavaScript (basic), SQL
@@ -78,7 +78,7 @@ ACHIEVEMENTS:
 - Optimized models for edge hardware performance
 
 SUMMARY:
-ShreeyanBejagam is an AI Engineer specializing in computer vision, LLM-based systems, RAG pipelines, and AI agents, with strong Python experience and a track record of building real-world, deployable AI applications. His experience spans robotics CV pipelines, gesture recognition, face recognition, RAG assistants, and multi-agent frameworks. He works efficiently, learns quickly, and focuses on building scalable, practical AI solutions.`
+Harshit is an AI Engineer specializing in computer vision, LLM-based systems, RAG pipelines, and AI agents, with strong Python experience and a track record of building real-world, deployable AI applications. His experience spans robotics CV pipelines, gesture recognition, face recognition, RAG assistants, and multi-agent frameworks. He works efficiently, learns quickly, and focuses on building scalable, practical AI solutions.`
     
     localStorage.setItem('personDetails', defaultDetails)
     return defaultDetails
