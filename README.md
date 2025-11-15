@@ -91,7 +91,4 @@ The UI uses Tailwind CSS. You can customize colors, animations, and styles in:
 - **Tailwind CSS** - Styling
 - **PostCSS** - CSS processing
 
-## License
-
-MIT
 
