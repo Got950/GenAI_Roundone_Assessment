@@ -60,7 +60,7 @@ function InputArea({ onSendMessage, isListening, onToggleListening }: InputAreaP
             onKeyPress={handleKeyPress}
             placeholder={isListening ? 'Listening...' : 'Type your message or use voice input...'}
             rows={1}
-            className="w-full px-4 py-3 pr-12 bg-white/95 dark:bg-slate-800/95 border border-blue-300 dark:border-blue-500/60 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent resize-none transition-all duration-200 shadow-md hover:shadow-lg dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 code-text"
+            className="w-full px-4 py-3 pr-12 bg-white/95 dark:bg-slate-800/95 border border-blue-300 dark:border-blue-500/60 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent resize-none transition-all duration-200 shadow-md hover:shadow-lg dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 code-text overflow-y-auto scrollbar-hide"
             style={{
               minHeight: '48px',
               maxHeight: '120px',
@@ -74,7 +74,7 @@ function InputArea({ onSendMessage, isListening, onToggleListening }: InputAreaP
           <button
             onClick={handleSend}
             disabled={!input.trim()}
-            className="absolute right-2 bottom-2 p-2 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-600 dark:to-blue-800 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 dark:hover:from-blue-700 dark:hover:to-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-110 active:scale-95 shadow-lg vibrant-glow"
+            className="absolute right-2 bottom-2 p-2 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-600 dark:to-blue-800 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 dark:hover:from-blue-700 dark:hover:to-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-110 active:scale-95 shadow-lg vibrant-glow z-10"
           >
             <svg
               className="w-5 h-5"
