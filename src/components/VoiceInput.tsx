@@ -8,68 +8,124 @@ interface VoiceInputProps {
 
 function VoiceInput({ onTranscript, isListening, onListeningChange }: VoiceInputProps) {
   const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const isInitializedRef = useRef(false)
 
   useEffect(() => {
+    // Check if speech recognition is supported
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      console.warn('Speech recognition not supported')
+      console.warn('Speech recognition not supported in this browser')
       return
     }
 
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    const recognition = new SpeechRecognition()
+    // Initialize recognition only once
+    if (!isInitializedRef.current) {
+      try {
+        const SpeechRecognition =
+          (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+        const recognition = new SpeechRecognition()
 
-    recognition.continuous = false
-    recognition.interimResults = false
-    recognition.lang = 'en-US'
+        recognition.continuous = true
+        recognition.interimResults = false
+        recognition.lang = 'en-US'
 
-    recognition.onstart = () => {
-      onListeningChange(true)
-    }
+        recognition.onstart = () => {
+          console.log('Speech recognition started')
+          onListeningChange(true)
+        }
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = Array.from(event.results)
-        .map((result) => result[0].transcript)
-        .join('')
-      if (transcript.trim()) {
-        onTranscript(transcript)
+        recognition.onresult = (event: SpeechRecognitionEvent) => {
+          let finalTranscript = ''
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript + ' '
+            }
+          }
+          
+          if (finalTranscript.trim()) {
+            console.log('Transcript received:', finalTranscript.trim())
+            onTranscript(finalTranscript.trim())
+            // Stop after getting result
+            try {
+              recognition.stop()
+            } catch (e) {
+              // Ignore stop errors
+            }
+          }
+        }
+
+        recognition.onerror = (event: any) => {
+          console.error('Speech recognition error:', event.error)
+          onListeningChange(false)
+          
+          if (event.error === 'no-speech') {
+            // No speech detected, just stop
+            try {
+              recognition.stop()
+            } catch (e) {
+              // Ignore
+            }
+          } else if (event.error === 'not-allowed') {
+            alert('Microphone permission denied. Please enable microphone access in your browser settings.')
+          } else if (event.error === 'aborted') {
+            // User stopped, ignore
+          } else {
+            console.error('Speech recognition error:', event.error)
+          }
+        }
+
+        recognition.onend = () => {
+          console.log('Speech recognition ended')
+          onListeningChange(false)
+        }
+
+        recognitionRef.current = recognition
+        isInitializedRef.current = true
+      } catch (error) {
+        console.error('Failed to initialize speech recognition:', error)
       }
-      onListeningChange(false)
     }
-
-    recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error)
-      onListeningChange(false)
-      if (event.error === 'no-speech') {
-        // Don't show alert for no-speech, just stop listening
-      } else if (event.error === 'not-allowed') {
-        alert('Microphone permission denied. Please enable microphone access.')
-      }
-    }
-
-    recognition.onend = () => {
-      onListeningChange(false)
-    }
-
-    recognitionRef.current = recognition
 
     return () => {
+      // Cleanup on unmount
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop()
+          recognitionRef.current.abort()
         } catch (e) {
           // Ignore errors on cleanup
         }
       }
     }
-  }, [onTranscript, onListeningChange])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty deps - initialize only once
 
   useEffect(() => {
-    if (!recognitionRef.current) return
+    if (!recognitionRef.current || !isInitializedRef.current) return
 
     if (isListening) {
       try {
-        recognitionRef.current.start()
+        // Stop any existing recognition first
+        try {
+          recognitionRef.current.stop()
+        } catch (e) {
+          // Ignore if not running
+        }
+        
+        // Small delay to ensure previous recognition is stopped
+        setTimeout(() => {
+          if (recognitionRef.current && isListening) {
+            try {
+              recognitionRef.current.start()
+            } catch (error: any) {
+              console.error('Error starting recognition:', error)
+              // If already started, ignore
+              if (error.name !== 'InvalidStateError') {
+                onListeningChange(false)
+              }
+            }
+          }
+        }, 100)
       } catch (error) {
         console.error('Error starting recognition:', error)
         onListeningChange(false)
@@ -78,7 +134,7 @@ function VoiceInput({ onTranscript, isListening, onListeningChange }: VoiceInput
       try {
         recognitionRef.current.stop()
       } catch (error) {
-        // Ignore stop errors
+        // Ignore stop errors (might not be running)
       }
     }
   }, [isListening, onListeningChange])
