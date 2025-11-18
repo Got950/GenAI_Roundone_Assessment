@@ -32,6 +32,85 @@ function Chatbot() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const messagesRef = useRef<MessageType[]>(messages)
+  const speechSynthesisRef = useRef<SpeechSynthesis | null>(null)
+
+  // Initialize speech synthesis and load voices
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      speechSynthesisRef.current = window.speechSynthesis
+      
+      // Load voices (some browsers need this)
+      const loadVoices = () => {
+        if (speechSynthesisRef.current) {
+          speechSynthesisRef.current.getVoices()
+        }
+      }
+      
+      loadVoices()
+      // Some browsers fire this event when voices are loaded
+      if (speechSynthesisRef.current.onvoiceschanged !== undefined) {
+        speechSynthesisRef.current.onvoiceschanged = loadVoices
+      }
+    }
+  }, [])
+
+  // Function to speak text
+  const speakText = (text: string) => {
+    if (!speechSynthesisRef.current) {
+      console.warn('Speech synthesis not supported')
+      return
+    }
+
+    // Stop any ongoing speech
+    speechSynthesisRef.current.cancel()
+
+    // Clean text - remove emojis and special characters for better speech
+    const cleanText = text
+      .replace(/[👋💬🎨✨]/g, '') // Remove emojis
+      .replace(/\[.*?\]/g, '') // Remove brackets content
+      .trim()
+
+    if (!cleanText) return
+
+    const utterance = new SpeechSynthesisUtterance(cleanText)
+    utterance.lang = 'en-US'
+    utterance.rate = 1.0 // Normal speed
+    utterance.pitch = 1.0 // Normal pitch
+    utterance.volume = 1.0 // Full volume
+
+    // Try to use a natural-sounding voice
+    const selectVoice = () => {
+      const voices = speechSynthesisRef.current?.getVoices() || []
+      if (voices.length === 0) {
+        // Voices not loaded yet, use default
+        speechSynthesisRef.current?.speak(utterance)
+        return
+      }
+      
+      const preferredVoice = voices.find(
+        (voice) => voice.name.includes('Google') || voice.name.includes('Natural') || voice.name.includes('Neural')
+      ) || voices.find((voice) => voice.lang.startsWith('en'))
+      
+      if (preferredVoice) {
+        utterance.voice = preferredVoice
+      }
+
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event)
+      }
+
+      speechSynthesisRef.current?.speak(utterance)
+    }
+
+    // Try to select voice immediately, or wait if voices aren't loaded
+    const voices = speechSynthesisRef.current.getVoices()
+    if (voices.length === 0) {
+      // Wait a bit for voices to load
+      setTimeout(selectVoice, 100)
+    } else {
+      selectVoice()
+    }
+  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -97,6 +176,9 @@ function Chatbot() {
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, botMessage])
+      
+      // Speak the bot's response
+      speakText(response)
     } catch (error: any) {
       console.error('Error calling Groq API:', error)
       const errorMessage: MessageType = {
@@ -106,6 +188,9 @@ function Chatbot() {
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, errorMessage])
+      
+      // Speak the error message
+      speakText(errorMessage.text)
     } finally {
       setIsTyping(false)
     }
