@@ -52,6 +52,13 @@ function Chatbot() {
         speechSynthesisRef.current.onvoiceschanged = loadVoices
       }
     }
+    
+    // Cleanup: stop any ongoing speech when component unmounts
+    return () => {
+      if (speechSynthesisRef.current) {
+        speechSynthesisRef.current.cancel()
+      }
+    }
   }, [])
 
   // Function to speak text
@@ -141,8 +148,24 @@ function Chatbot() {
   const handleSendMessage = async (text: string) => {
     if (!text.trim()) return
 
+    // Stop any ongoing speech when sending a new message
+    if (speechSynthesisRef.current) {
+      speechSynthesisRef.current.cancel()
+    }
+
     // Always use the API key from context, environment variable, or default
     const keyToUse = apiKey || import.meta.env.VITE_GROQ_API_KEY || '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'
+    
+    if (!keyToUse) {
+      const errorMessage: MessageType = {
+        id: (Date.now() + 1).toString(),
+        text: 'API key is missing. Please configure your Groq API key.',
+        sender: 'bot',
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+      return
+    }
 
     const userMessage: MessageType = {
       id: Date.now().toString(),
@@ -198,12 +221,20 @@ function Chatbot() {
 
   const handleVoiceTranscript = (text: string) => {
     if (text.trim()) {
+      // Stop any ongoing speech when user speaks
+      if (speechSynthesisRef.current) {
+        speechSynthesisRef.current.cancel()
+      }
       // Voice input automatically sends the message
       handleSendMessage(text)
     }
   }
 
   const handleToggleListening = () => {
+    // Stop any ongoing speech when starting to listen
+    if (speechSynthesisRef.current) {
+      speechSynthesisRef.current.cancel()
+    }
     setIsListening((prev) => !prev)
   }
 

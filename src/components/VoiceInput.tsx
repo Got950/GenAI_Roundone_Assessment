@@ -113,8 +113,9 @@ function VoiceInput({ onTranscript, isListening, onListeningChange }: VoiceInput
         }
         
         // Small delay to ensure previous recognition is stopped
-        setTimeout(() => {
-          if (recognitionRef.current && isListening) {
+        const timeoutId = setTimeout(() => {
+          // Check current state again to avoid stale closure
+          if (recognitionRef.current && isInitializedRef.current) {
             try {
               recognitionRef.current.start()
             } catch (error: any) {
@@ -126,6 +127,8 @@ function VoiceInput({ onTranscript, isListening, onListeningChange }: VoiceInput
             }
           }
         }, 100)
+        
+        return () => clearTimeout(timeoutId)
       } catch (error) {
         console.error('Error starting recognition:', error)
         onListeningChange(false)

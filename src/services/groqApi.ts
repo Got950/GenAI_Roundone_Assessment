@@ -61,10 +61,28 @@ Just answer questions naturally using the information above. Be human, not a cha
     }
 
     const data: GroqResponse = await response.json()
-    return data.choices[0]?.message?.content || 'Sorry, I could not generate a response.'
-  } catch (error) {
+    
+    if (!data.choices || data.choices.length === 0) {
+      throw new Error('No response from API')
+    }
+    
+    const content = data.choices[0]?.message?.content
+    if (!content || content.trim() === '') {
+      throw new Error('Empty response from API')
+    }
+    
+    return content
+  } catch (error: any) {
     console.error('Groq API Error:', error)
-    throw error
+    
+    // Provide user-friendly error messages
+    if (error.message) {
+      throw error
+    } else if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error('Network error. Please check your internet connection.')
+    } else {
+      throw new Error('Failed to get response from AI. Please try again.')
+    }
   }
 }
 
