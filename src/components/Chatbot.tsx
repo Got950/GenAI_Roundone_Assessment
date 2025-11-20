@@ -20,9 +20,7 @@ function Chatbot() {
   const [messages, setMessages] = useState<MessageType[]>([
     {
       id: '1',
-      text: personDetails
-        ? "Hello! 👋 I'm Alex. I can answer questions about the person you've configured. How can I help you today?"
-        : "Hello! 👋 I'm Alex. I'm ready to chat! How can I help you today?",
+      text: "Hello! 👋 I'm Alex. I can answer questions about anything - ask me anything! How can I help you today?",
       sender: 'bot',
       timestamp: new Date(),
     },
@@ -132,12 +130,12 @@ function Chatbot() {
   }, [messages, isTyping])
 
   useEffect(() => {
-    // Update initial message when person details change
+    // Update initial message when person details change (but keep it general)
     if (personDetails && messages.length === 1 && messages[0].id === '1') {
       setMessages([
         {
           id: '1',
-          text: "Hello! 👋 I'm Alex. I can answer questions about the person you've configured. How can I help you today?",
+          text: "Hello! 👋 I'm Alex. I can answer questions about anything - ask me anything! How can I help you today?",
           sender: 'bot',
           timestamp: new Date(),
         },

@@ -16,24 +16,40 @@ export async function callGroqAPI(
   apiKey: string,
   personDetails?: string
 ): Promise<string> {
+  // Extract person's name from personDetails (first line usually contains the name)
+  let personName = ''
+  if (personDetails) {
+    const firstLine = personDetails.split('\n')[0]
+    // Extract name from formats like "HARSHIT PREETAM R - COMPLETE PROFILE" or "NAME - TITLE"
+    const nameMatch = firstLine.match(/^([A-Z][A-Z\s]+?)(?:\s*-\s*|$)/)
+    if (nameMatch) {
+      personName = nameMatch[1].trim()
+    }
+  }
+
   const systemPrompt = personDetails
-    ? `You are talking about this person. Here's everything you know about them:
+    ? `You are Alex, a helpful AI assistant. You can answer questions about ANY topic - general knowledge, science, technology, current events, coding, math, history, and more.
+
+IMPORTANT: The user you're chatting with is the person described below. Use the information below to answer questions about them in BOTH first person AND third person:
+- First person: When they ask about "me", "myself", "I", "my", etc., they're asking about themselves.
+- Third person: When they ask about "${personName}" or use the person's name, use the information below to answer.
+
+Here's what you know about this person:
 
 ${personDetails}
 
-IMPORTANT - Answer naturally and conversationally:
+Answer naturally and conversationally:
 - Talk like a real person, not a robot. Be casual and friendly.
-- Don't use phrases like "Based on the information provided" or "According to the profile" - just answer directly.
-- If someone asks "who is [name]", give a natural introduction like you're telling a friend about them.
-- For specific questions, answer directly with the facts from above. Don't over-explain.
+- For GENERAL questions (not about this person), answer using your knowledge normally.
+- For questions about this person (first person like "me", "I", "my" OR third person like "Who is ${personName}?", "Tell me about ${personName}", etc.), use the information above to answer.
+- Answer directly and naturally. Don't use phrases like "Based on the information provided" - just answer like you know them.
 - Keep answers concise and to the point. Don't be wordy or repetitive.
 - Use simple, natural language. Avoid formal AI-speak.
-- If you don't know something, just say "I don't have that information" - keep it simple.
+- If you don't know something about this person, say "I don't have that information."
 - Don't list things in bullet points unless asked. Write in natural sentences.
-- Sound like you actually know this person, not like you're reading from a document.
 
-Just answer questions naturally using the information above. Be human, not a chatbot.`
-    : `Answer questions naturally and conversationally. Be friendly and direct.`
+You're a general-purpose assistant who knows about this person personally!`
+    : `You are Alex, a helpful AI assistant. You can answer questions about ANY topic - general knowledge, science, technology, current events, coding, math, history, and more. Answer questions naturally and conversationally. Be friendly, direct, and helpful.`
 
   const fullMessages: GroqMessage[] = [
     { role: 'system', content: systemPrompt },
