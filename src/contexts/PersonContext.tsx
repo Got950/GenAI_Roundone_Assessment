@@ -1,6 +1,10 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
 
+<<<<<<< HEAD
 // Get API key from environment variable only
+=======
+// Get API key from environment variable
+>>>>>>> aeb63929d79ba1011aab82b46fc46e8f3d7650a0
 const DEFAULT_API_KEY = import.meta.env.VITE_GROQ_API_KEY || ''
 
 interface PersonContextType {
