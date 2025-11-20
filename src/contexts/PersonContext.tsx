@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
 
-// Default API key - Set directly for immediate use
-// This will be used if no environment variable is set
-const DEFAULT_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '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'
+// Get API key from environment variable
+const DEFAULT_API_KEY = import.meta.env.VITE_GROQ_API_KEY || ''
 
 interface PersonContextType {
   personDetails: string
